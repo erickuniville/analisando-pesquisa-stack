@@ -26,6 +26,9 @@ public class ScriptJobPriorities {
 //        jobPriorities.put("8", "Opportunities for professional development");
 //        jobPriorities.put("9", "The opportunity to work from home/remotely");
 //        jobPriorities.put("10", "The compensation and benefits offered");
+
+        // NÃO MUDAR OS VALORES DEFINIDOS DESSE HASHMAP!!! ELAS SÃO USADAS NO 'PYTHON' E 'R STUDIO' DESSA FORMA!
+
         jobPriorities.put("1", "diversity");
         jobPriorities.put("2", "culture");
         jobPriorities.put("3", "tecnologies");
@@ -37,11 +40,14 @@ public class ScriptJobPriorities {
         jobPriorities.put("9", "workRemot");
         jobPriorities.put("10", "compensations");
 
-        try (PrintWriter writer = new PrintWriter("survey_tratado_teste.csv")) {
+        int total = 0;
+
+        try (PrintWriter writer = new PrintWriter("survey_tratado_israel.csv")) {
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new FileReader(fileResource));
-            writer.println("jobPriority,jobSatisfaction");
+            writer.println("priority,satisfaction");
             for (CSVRecord record : records) {
                 String jobSatisfactionStr = record.get("JobSatisfaction");
+                String country = record.get("Country");
                 String jobPriority = "NA";
 
                 for(int i=1; i<=10; i++) {
@@ -51,14 +57,24 @@ public class ScriptJobPriorities {
                     }
                 }
 
-                if(jobSatisfactionStr.equals("NA") || jobPriority.equals("NA")) {
+                if(jobSatisfactionStr.equals("NA") || jobPriority.equals("NA") || !country.equals("Israel")) {
                     continue;
                 }
 
                 int jobSatisfaction = jobSatisfactionToNumeric(jobSatisfactionStr);
 
                 writer.println(jobPriorities.get(jobPriority) + "," + jobSatisfaction);
+
+                total++;
             }
         }
+
+        System.out.println("Total: " + total);
+
+        // Brazil: 1517
+        // Australia: 1389
+        // Israel: 604
+        // Japan: 223
+        // Slovenia: 136
     }
 }
